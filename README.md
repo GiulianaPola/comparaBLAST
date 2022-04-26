@@ -16,7 +16,7 @@ ID seq columns for A, evalue for A, ID seq for B, e-value, ID seq for A/B, e-val
 ### 18/10/2021 (1.0.1)
 Inserting the Python shebang line: 
 
-#!/usr/bin/python
+!/usr/bin/python
 
 Incorporating help with -h or -help or no parameter 
 
