@@ -14,13 +14,17 @@ Redundancies were reduced by eliminating results with a lower e-value or bitscor
 ID seq columns for A, evalue for A, ID seq for B, e-value, ID seq for A/B, e-value in A, evalue in B, decision (A or B)
 
 ### 18/10/2021 (1.0.1)
-Inserting the Python shebang line: 
+- Inserting the Python shebang line: 
 
 !/usr/bin/python
 
-Incorporating help with -h or -help or no parameter 
+- Incorporating help with -h or -help or no parameter. 
 
 ### 25/04/2022 (1.1.0)
-Incorporating the stitle column of databases A and B:
+- Incorporating the stitle column of databases A and B:
 
 ID seq columns for A, evalue for A, stitle for A, ID seq for B, e-value, stitle for B, ID seq for A/B, e-value in A, stitle for A, evalue in B, stitle for B, decision (A or B)
+
+### 28/04/2022 (1.1.1)
+- Corrected column formatting in the output table;
+- Changed "Escolha" column to "Selected_choice.
