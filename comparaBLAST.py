@@ -1,16 +1,16 @@
 #!/usr/bin/python
 
-#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a Fh_com_filtro_30_bats.txt -b Fh_com_filtro_30_vir.txt -o Fh_comparado.tab
-#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a La_com_filtro_30_bats.txt -b La_com_filtro_30_vir.txt -o La_comparado.tab
-#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a Nm_com_filtro_30_bats.txt -b Nm_com_filtro_30_vir.txt -o Nm_comparado.tab
-#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a output_chiroptera -b output_virus -o output_comparado.tab
-#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.v.1.1.1.py" -a "/home/oocyst/itv/montagens_trinity/compara_blast/Fh_sem_filtro_Chirop.txt" -b "/home/oocyst/itv/montagens_trinity/compara_blast/Fh_sem_filtro_viruses.txt" -o teste.tab
+#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a Fh_com_filtro_30_bats.txt -b Fh_com_filtro_30_vir.txt -o Fh_bats_x_vir.tab
+#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a La_com_filtro_30_bats.txt -b La_com_filtro_30_vir.txt -o La_bats_x_vir.tab
+#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a Nm_com_filtro_30_bats.txt -b Nm_com_filtro_30_vir.txt -o Nm_bats_x_vir.tab
+#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a saida_chiroptera -b saida_virus -o chiroptera_x_virus.tab
+#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py" -a "/home/oocyst/itv/montagens_trinity/compara_blast/Fh_sem_filtro_Chirop.txt" -b "/home/oocyst/itv/montagens_trinity/compara_blast/Fh_sem_filtro_viruses.txt" -o Fh_chirop_x_viruses.tab
 
 
 import argparse
 import csv
 
-version='1.1.1'
+version='1.1.3'
 
 menu = 'ComparaBLAST v{} - comparison of sequence BLAST results against two databases\n'.format(version)
 menu = menu + '(c) 2021. Arthur Gruber, Giuliana Pola & Liliane S. Oliveira\n'
@@ -29,16 +29,12 @@ parser.add_argument('-h', '--help', action='store_true')
 args = parser.parse_args()
 processed=[]
 
-def getfilename(path):
-    head, tail = ntpath.split(path)
-    return tail or ntpath.basename(head)
-
 def order(filename):
     try:
       file=open(filename, 'r')
       text=file.read()
     except:
-      print("File '{}' cannot be opened!".getfilename(filename))
+      print("File '{}' cannot be opened!".format(filename))
       quit()
     else:
       seqs = dict()
@@ -80,15 +76,7 @@ def compare(A, B):
         if qseqid in A.keys() and qseqid in B.keys():
             x = A[qseqid]
             y = B[qseqid]
-            if ncols==2:
-              xy=[str(x[1]),y[1]]
-            elif ncols==3:
-              if len(x)==3 and len(y)==3:
-                xy=[str(x[1]),x[2],str(y[1]),y[2]]
-              elif len(x)==2 and len(y)==3:
-                xy=[str(x[1]),'',str(y[1]),y[2]]
-              elif len(x)==3 and len(y)==2:
-                xy=[str(x[1]),x[2],str(y[1]),'']
+            xy=[qseqid]
             if x[1] < y[1]:
 #               print(x[1],'<',str(y[1]),' -> A')
                 xy.append('A')
@@ -132,52 +120,47 @@ else:
                           delimiter='\t')
     if ncols==2:
       writer.writerow([
-          'A_qseqid', 'A_evalue', 'B_qseqid', 'B_evalue', 'AB_qseqid',
-          'A_evalue', 'B_evalue', 'Escolha'
+          'A_qseqid', 'A_evalue', 'B_qseqid', 'B_evalue', 'AB_qseqid', 'Selected_choice'
       ])
     elif ncols==3:
       writer.writerow([
-          'A_qseqid', 'A_evalue', 'A_stitle', 'B_qseqid', 'B_evalue', 'B_stitle', 'AB_qseqid',
-          'A_evalue',  'A_stitle', 'B_evalue', 'A_stitle', 'Selected_choice'
+          'A_qseqid', 'A_evalue', 'A_stitle', 'B_qseqid', 'B_evalue', 'B_stitle', 'AB_qseqid', 'Selected_choice'
       ])
-    for i in range(max(len(A),len(B),len(AB))):
+    qseqids=sorted(AB.keys())+sorted(A.keys())+sorted(B.keys())
+    for i in range(len(qseqids)):
         row = []
-        if i<len(A):
-          A_qseqid=sorted(A.keys())[i]
-          row.append(A_qseqid) #A_qseqid
-          row.append(str(list(A[A_qseqid])[1])) #A_evalue
-          if ncols==3:
-            if len(list(A[A_qseqid]))==3:
-              row.append(list(A[A_qseqid])[2]) #A_stitle
-            else:
-              row.append('')
-        else:
-          if ncols==3:
-            row.extend(['', '',''])
-          elif ncols==2:
-            row.extend(['', ''])
-        if i<len(B):
-          B_qseqid=sorted(B.keys())[i]
-          row.append(B_qseqid) #B_qseqid
-          row.append(str(list(B[B_qseqid])[1])) #B_evalue
-          if ncols==3:
-            if len(list(B[B_qseqid]))==3:
-              row.append(list(B[B_qseqid])[2]) #B_stitle
-            else:
-              row.append('')
-        else:
-          if ncols==3:
-            row.extend(['', '',''])
-          elif ncols==2:
-            row.extend(['', ''])
-        if i<len(AB):
-          AB_qseqid=sorted(AB.keys())[i]
-          row.append(AB_qseqid) #AB_qseqid
-          row.extend(AB[AB_qseqid]) #A_evalue, (A_stitle), B_evalue, (B_stitle), Escolha
-        else:
-          if ncols==3:
-            row.extend(['', '','','','',''])
-          elif ncols==2:
-            row.extend(['', '','',''])
-        writer.writerow(row)
+        qseqid=qseqids[i]
+        if qseqid not in processed:
+         if qseqid in A.keys():
+           row.append(qseqid) #A_qseqid
+           row.append(str(list(A[qseqid])[1])) #A_evalue
+           if ncols==3:
+             if len(list(A[qseqid]))==3:
+               row.append(list(A[qseqid])[2]) #A_stitle
+             else:
+               row.append('')
+         else:
+           if ncols==3:
+             row.extend(['', '',''])
+           elif ncols==2:
+             row.extend(['', ''])
+         if qseqid in B.keys():
+           row.append(qseqid) #B_qseqid
+           row.append(str(list(B[qseqid])[1])) #B_evalue
+           if ncols==3:
+             if len(list(B[qseqid]))==3:
+               row.append(list(B[qseqid])[2]) #B_stitle
+             else:
+               row.append('')
+         else:
+           if ncols==3:
+             row.extend(['', '',''])
+           elif ncols==2:
+             row.extend(['', ''])
+         if qseqid in AB.keys():
+           row.extend(AB[qseqid]) #AB_qseqid, Selected_choice
+         else:
+           row.extend(['', ''])
+         writer.writerow(row)
+         processed.append(qseqid)
     output.close()

@@ -32,3 +32,6 @@ ID seq columns for A, evalue for A, stitle for A, ID seq for B, e-value, stitle 
 
 #### (1.1.2)
 - Corrected error when extracting columns
+
+### 29/04/2022 (1.1.3)
+- Sorting the output table to align rows of the same qseqid from database A, B, and those in both
