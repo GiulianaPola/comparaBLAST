@@ -25,6 +25,10 @@ ID seq columns for A, evalue for A, ID seq for B, e-value, ID seq for A/B, e-val
 
 ID seq columns for A, evalue for A, stitle for A, ID seq for B, e-value, stitle for B, ID seq for A/B, e-value in A, stitle for A, evalue in B, stitle for B, decision (A or B)
 
-### 28/04/2022 (1.1.1)
+### 28/04/2022
+#### (1.1.1)
 - Corrected column formatting in the output table;
 - Changed "Escolha" column to "Selected_choice.
+
+#### (1.1.2)
+- Corrected error when extracting columns

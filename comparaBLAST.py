@@ -4,6 +4,8 @@
 #"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a La_com_filtro_30_bats.txt -b La_com_filtro_30_vir.txt -o La_comparado.tab
 #"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a Nm_com_filtro_30_bats.txt -b Nm_com_filtro_30_vir.txt -o Nm_comparado.tab
 #"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.py"  -a output_chiroptera -b output_virus -o output_comparado.tab
+#"/home/gpolavirus/Arthur/comparaBLAST/comparaBLAST.v.1.1.1.py" -a "/home/oocyst/itv/montagens_trinity/compara_blast/Fh_sem_filtro_Chirop.txt" -b "/home/oocyst/itv/montagens_trinity/compara_blast/Fh_sem_filtro_viruses.txt" -o teste.tab
+
 
 import argparse
 import csv
@@ -40,43 +42,35 @@ def order(filename):
       quit()
     else:
       seqs = dict()
-      try:
-        sniffer = csv.Sniffer()
-        dialect = sniffer.sniff(text.replace('\n',' '))
-        dialect.delimiter
-      except:
-        print("Column delimiter wasn't indentified!")
-        quit()
-      else:
-        for row in text.split('\n'):
-           if not row=='':
-             row=row.replace('"','').replace('  ',' ')
-             columns = row.split(dialect.delimiter)
-             qseqid = columns[0]
-             bitscore = float(columns[4])
-             evalue = float(columns[6])
-             if len(columns)==8:
-               stitle=columns[7]
-             if qseqid in seqs.keys():
-                 item = seqs[qseqid]
-                 if evalue < item[1]:
-                     #print(evalue,'<',item[1])
-                     if len(columns)==8:
-                       seqs[qseqid] = [bitscore, evalue,stitle]
-                     else:
-                       seqs[qseqid] = [bitscore, evalue]
-                 elif evalue == item[1] and bitscore > item[0]:
-                     #print(evalue,'==',item[1],' and ',bitscore,'>',item[0])
-                     if len(columns)==8:
-                       seqs[qseqid] = [bitscore, evalue,stitle]
-                     else:
-                       seqs[qseqid] = [bitscore, evalue]
-             if not qseqid in seqs.keys():
-                 if len(columns)==8:
-                   seqs[qseqid] = [bitscore, evalue,stitle]
-                 else:
-                   seqs[qseqid] = [bitscore, evalue]
-        return seqs
+      for row in text.split('\n'):
+         if not row=='':
+           row=row.replace('"','').replace('  ',' ')
+           columns = row.split('\t')
+           qseqid = columns[0]
+           bitscore = float(columns[4])
+           evalue = float(columns[6])
+           if len(columns)==8:
+             stitle=columns[7]
+           if qseqid in seqs.keys():
+               item = seqs[qseqid]
+               if evalue < item[1]:
+                   #print(evalue,'<',item[1])
+                   if len(columns)==8:
+                     seqs[qseqid] = [bitscore, evalue,stitle]
+                   else:
+                     seqs[qseqid] = [bitscore, evalue]
+               elif evalue == item[1] and bitscore > item[0]:
+                   #print(evalue,'==',item[1],' and ',bitscore,'>',item[0])
+                   if len(columns)==8:
+                     seqs[qseqid] = [bitscore, evalue,stitle]
+                   else:
+                     seqs[qseqid] = [bitscore, evalue]
+           if not qseqid in seqs.keys():
+               if len(columns)==8:
+                 seqs[qseqid] = [bitscore, evalue,stitle]
+               else:
+                 seqs[qseqid] = [bitscore, evalue]
+      return seqs
 
 
 def compare(A, B):
